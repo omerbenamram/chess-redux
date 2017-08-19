@@ -1,0 +1,29 @@
+chessboard-size = 500px
+cell-size = (chessboard-size / 8)
+
+div.chessboard
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  width: chessboard-size
+  height: chessboard-size
+
+div.chessboard-row:nth-child(even)
+  div.chessboard-cell:nth-child(even)
+    background-color: white
+
+div.chessboard-row:nth-child(odd)
+  div.chessboard-cell:nth-child(odd)
+    background-color: white
+
+div.chessboard-cell
+  width: cell-size
+  height: cell-size
+  display: flex;
+  align-items: center;
+
+  background-color: gray
+
+img.piece
+  display: block
+  margin: 0 auto
