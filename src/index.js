@@ -18,15 +18,17 @@ const store = configureStore();
 
 let render = App => (
     ReactDOM.render(
+        //what is the provider tag, the ConnectedRouter tag, and the route tag?
         <Provider store={store}>
             <ConnectedRouter history={history}>
                 <Route path="/" component={App}/>
             </ConnectedRouter>
         </Provider>,
-        document.getElementById('root'))
+          document.getElementById('root'))
 );
 
 // We first render the application
+
 render(App);
 
 // If webpacks HMR detects a change in the App, we reload it

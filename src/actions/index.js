@@ -1,5 +1,4 @@
-export const cellClicked = () => {
-    return {
-        type: 'CELL_CLICKED'
-    }
-};
+export const cellClicked = (placement = 0) => ({
+        type: 'CELL_CLICKED',
+        placement
+    });
