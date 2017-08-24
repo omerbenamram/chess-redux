@@ -1,29 +1,39 @@
 import React from 'react';
 import './ChessBoard.styl'
-import * as _ from 'lodash';
 import {cellClicked} from "../actions/index";
 import {connect} from "react-redux";
 import {Container} from "reactstrap";
-import ChessBoardRow from "./ChessBoardRow";
-import {numRows} from "../constants/index";
+import ChessBoardCell from "./ChessBoardCell";
 
-let ChessBoard = ({onCellClick}) => (
+
+let ChessBoard = ({pieces, onCellClick}) => (
     <Container>
         <div className="chessboard">
-            {_.range(numRows).map(
-                (i) => (<ChessBoardRow key={i} numRow={i} onCellClick={onCellClick}/>)
+            {
+                Object.entries(pieces).map(([placement, piece]) => {
+                    return piece === {} ?
+                        <ChessBoardCell key={placement} placement={placement} imgSrc={'./assets/blank.svg'} alt='hi' onCellClick={onCellClick}/>
+                        :
+                        <ChessBoardCell key={placement} placement={placement} imgSrc={piece.imgSrc} alt={piece.type}
+                                        onCellClick={onCellClick}/>
+                }
             )}
         </div>
     </Container>
 );
 
 const mapStateToProps = (state) => {
-    return state
+    console.log(state.pieces)
+    return {
+        pieces: state.pieces
+
+    }
 };
 
-const mapDispatchToProps = (dispatch) => ({
-    onCellClick: (placement) => {dispatch(cellClicked(placement))}
-});
+// const mapDispatchToProps = (dispatch) => ({
+//     onCellClick: (placement) => {dispatch(cellClicked(placement))}
+// });
+
 //why does the onCellClick: cellClicked work? when there is no dispatch call?
 //also how does it know to get placement?
 ChessBoard = connect(
@@ -32,3 +42,5 @@ ChessBoard = connect(
 )(ChessBoard);
 
 export default ChessBoard;
+
+// <img src={pieces['A2'].imgSrc} alt={pieces['A2'].type}></img>

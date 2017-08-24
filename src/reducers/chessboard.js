@@ -1,3 +1,7 @@
+
+
+
+
 const chessBoard = (state = {}, action) => {
     switch (action.type) {
         case 'CELL_CLICKED':

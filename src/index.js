@@ -13,8 +13,9 @@ import configureStore from "./store/configureStore";
 import {history} from "./store/configureStore"
 import App from "./App";
 import {Route} from "react-router-dom";
+import {initState} from './constants/index.js'
 
-const store = configureStore();
+const store = configureStore(initState);
 
 let render = App => (
     ReactDOM.render(

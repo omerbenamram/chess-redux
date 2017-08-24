@@ -1,10 +1,9 @@
 import React from 'react';
-import './ChessBoard.css'
-import king from './assets/king.svg'
+import './ChessBoard.css';
 
-const ChessBoardCell = ({onCellClick, placement}) => (
+const ChessBoardCell = ({onCellClick, placement, imgSrc, alt}) => (
     <div className="chessboard-cell" onClick={() => onCellClick(placement)}>
-      {placement}
+        <img src='' alt={alt}/>
     </div>
 );
 

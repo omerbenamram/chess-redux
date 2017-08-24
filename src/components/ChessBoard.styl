@@ -1,6 +1,7 @@
 chessboard-size = 500px
 cell-size = (chessboard-size / 8)
 
+
 div.chessboard
   display: flex
   flex-direction: row
@@ -12,21 +13,29 @@ div.chessboard
   display: flex
   flex-direction: row
 
-div.chessboard-row:nth-child(even)
-  div.chessboard-cell:nth-child(even)
-    background-color: white
 
-div.chessboard-row:nth-child(odd)
-  div.chessboard-cell:nth-child(odd)
-    background-color: white
+
+.selected
+   background-color: #2e7af4
+
+
+
+div.chessboard div:nth-child(-2n+8),
+div.chessboard div:nth-child(8) ~ div:nth-child(-2n+15),
+div.chessboard div:nth-child(16) ~ div:nth-child(-2n+24),
+div.chessboard div:nth-child(24) ~ div:nth-child(-2n+31),
+div.chessboard div:nth-child(32) ~ div:nth-child(-2n+40),
+div.chessboard div:nth-child(40) ~ div:nth-child(-2n+47),
+div.chessboard div:nth-child(48) ~ div:nth-child(-2n+56),
+div.chessboard div:nth-child(56) ~ div:nth-child(-2n+63)
+      background-color: grey
 
 div.chessboard-cell
   width: cell-size
   height: cell-size
   display: flex;
   align-items: center;
-
-  background-color: gray
+  background-color: white
 
 img.piece
   display: block
