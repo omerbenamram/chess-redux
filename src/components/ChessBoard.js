@@ -12,9 +12,9 @@ let ChessBoard = ({pieces, onCellClick}) => (
             {
                 Object.entries(pieces).map(([placement, piece]) => {
                     return piece === {} ?
-                        <ChessBoardCell key={placement} placement={placement} imgSrc={'./assets/blank.svg'} alt='hi' onCellClick={onCellClick}/>
+                        <ChessBoardCell key={placement} placement={placement} type='' onCellClick={onCellClick}/>
                         :
-                        <ChessBoardCell key={placement} placement={placement} imgSrc={piece.imgSrc} alt={piece.type}
+                        <ChessBoardCell key={placement} placement={placement} type={piece.color + piece.type}
                                         onCellClick={onCellClick}/>
                 }
             )}

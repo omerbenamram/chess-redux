@@ -18,8 +18,66 @@ div.chessboard
 .selected
    background-color: #2e7af4
 
+.WKing
+  background-image: url('./assets/WKing.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.BKing
+  background-image: url('./assets/BKing.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.WQueen
+  background-image: url('./assets/WQueen.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.BQueen
+  background-image: url('./assets/BQueen.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.BRook
+  background-image: url('./assets/BRook.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.WRook
+  background-image: url('./assets/WRook.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.WBishop
+  background-image: url('./assets/WBishop.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.BBishop
+  background-image: url('./assets/BBishop.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.WKnight
+  background-image: url('./assets/WKnight.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.BKnight
+  background-image: url('./assets/BKnight.svg')
+  background-repeat: no-repeat
+  background-position: center
+
+.WPawn
+  background-image: url('./assets/WPawn.svg')
+  background-repeat: no-repeat
+  background-position: center
 
 
+.BPawn
+  background-image: url('./assets/BPawn.svg')
+  background-repeat: no-repeat
+  background-position: center
 div.chessboard div:nth-child(-2n+8),
 div.chessboard div:nth-child(8) ~ div:nth-child(-2n+15),
 div.chessboard div:nth-child(16) ~ div:nth-child(-2n+24),
@@ -37,6 +95,8 @@ div.chessboard-cell
   align-items: center;
   background-color: white
 
-img.piece
+.piece
   display: block
   margin: 0 auto
+  width: cell-size
+  height: cell-size
