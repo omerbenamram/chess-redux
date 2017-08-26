@@ -6,15 +6,19 @@ import {Container} from "reactstrap";
 import ChessBoardCell from "./ChessBoardCell";
 
 
-let ChessBoard = ({pieces, onCellClick}) => (
+let ChessBoard = ({selected, pieces, onCellClick}) => (
     <Container>
         <div className="chessboard">
             {
                 Object.entries(pieces).map(([placement, piece]) => {
+                    let selectPiece = ''
+                    if (selected.placement === placement){
+                         selectPiece = 'selected'
+                    }
                     return piece === {} ?
-                        <ChessBoardCell key={placement} placement={placement} type='' onCellClick={onCellClick}/>
+                        <ChessBoardCell key={placement} placement={placement} color='' type='' selectPiece={selectPiece} onCellClick={onCellClick}/>
                         :
-                        <ChessBoardCell key={placement} placement={placement} type={piece.color + piece.type}
+                        <ChessBoardCell key={placement} placement={placement} color={piece.color} type={piece.type} selectPiece={selectPiece}
                                         onCellClick={onCellClick}/>
                 }
             )}
@@ -23,8 +27,8 @@ let ChessBoard = ({pieces, onCellClick}) => (
 );
 
 const mapStateToProps = (state) => {
-    console.log(state.pieces)
     return {
+        selected: state.selected,
         pieces: state.pieces
 
     }

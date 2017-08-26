@@ -1,10 +1,19 @@
 import React from 'react';
 import './ChessBoard.css';
 
+class ChessBoardCell extends React.Component {
 
-const ChessBoardCell = ({onCellClick, placement, type}) => (<div className="chessboard-cell" onClick={() => onCellClick(placement)}>
-            <div className={'piece '+ type}  />
+    render = () => {
+        const {onCellClick, placement, color, type, selectPiece} = this.props;
+
+        return (<div className='chessboard-cell' id={selectPiece} onClick={() => onCellClick(placement, {color, type})}>
+            {placement}
+            <div className={'piece '+ color + type}  />
         </div>)
+    }
+}
+
+
 
 
 export default ChessBoardCell;
