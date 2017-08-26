@@ -1,7 +1,6 @@
 chessboard-size = 500px
 cell-size = (chessboard-size / 8)
 
-
 div.chessboard
   display: flex
   flex-direction: row
@@ -9,71 +8,18 @@ div.chessboard
   width: chessboard-size
   height: chessboard-size
 
-
 #selected
-   background-color: #2e7af4
+  background-color: #2e7af4
 
-.WKing
-  background-image: url('./assets/WKing.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.BKing
-  background-image: url('./assets/BKing.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.WQueen
-  background-image: url('./assets/WQueen.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.BQueen
-  background-image: url('./assets/BQueen.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.BRook
-  background-image: url('./assets/BRook.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.WRook
-  background-image: url('./assets/WRook.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.WBishop
-  background-image: url('./assets/WBishop.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.BBishop
-  background-image: url('./assets/BBishop.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.WKnight
-  background-image: url('./assets/WKnight.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.BKnight
-  background-image: url('./assets/BKnight.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-.WPawn
-  background-image: url('./assets/WPawn.svg')
-  background-repeat: no-repeat
-  background-position: center
-
-
-.BPawn
-  background-image: url('./assets/BPawn.svg')
-  background-repeat: no-repeat
-  background-position: center
-
+for piece in 'WKing' 'BKing' 'WQueen' 'BQueen' 'WRook' 'BRook' 'WBishop' 'BBishop' 'WKnight' 'BKnight' 'WPawn' 'BPawn'
+  .{piece}
+    display: block
+    margin: 0 auto
+    width: cell-size
+    height: cell-size
+    background-repeat: no-repeat
+    background-position: center
+    background-image: url('./assets/' + piece + '.svg')
 
 div.chessboard div:nth-child(-2n+8),
 div.chessboard div:nth-child(8) ~ div:nth-child(-2n+15),
@@ -83,7 +29,7 @@ div.chessboard div:nth-child(32) ~ div:nth-child(-2n+40),
 div.chessboard div:nth-child(40) ~ div:nth-child(-2n+47),
 div.chessboard div:nth-child(48) ~ div:nth-child(-2n+56),
 div.chessboard div:nth-child(56) ~ div:nth-child(-2n+63)
-      background-color: grey
+  background-color: grey
 
 div.chessboard-cell
   width: cell-size
@@ -91,9 +37,3 @@ div.chessboard-cell
   display: flex;
   align-items: center;
   background-color: white
-
-.piece
-  display: block
-  margin: 0 auto
-  width: cell-size
-  height: cell-size
