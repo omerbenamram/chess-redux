@@ -12,7 +12,7 @@ export const chessMiddleware = store => next => action => {
       }
 
       if (state.selected === '' && action.pieceType.type !== undefined && action.pieceType.color === state.turn) {
-        store.dispatch()
+        store.dispatch(changeSelectedPiece(action.pieceType, action.placement))
       }
 
       if (state.selected !== '' && state.selected.pieceType.type !== undefined) {
