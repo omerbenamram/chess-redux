@@ -1,5 +1,14 @@
+import * as actionTypes from '../constants/actionTypes'
+
 export const cellClicked = (placement, pieceType) => ({
-    pieceType,
-    type: 'CELL_CLICKED',
-    placement
-    });
+  type: actionTypes.CELL_CLICKED,
+  pieceType,
+  placement
+});
+
+export const changeSelectedPiece = (placement, pieceType) => ({
+  type: actionTypes.CELL_CLICKED,
+  pieceType,
+  placement
+});
+
