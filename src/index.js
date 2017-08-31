@@ -13,20 +13,23 @@ import configureStore from "./store/configureStore";
 import {history} from "./store/configureStore"
 import App from "./App";
 import {Route} from "react-router-dom";
+import {initState} from './constants/index.js'
 
-const store = configureStore();
+const store = configureStore(initState);
 
 let render = App => (
     ReactDOM.render(
+        //what is the provider tag, the ConnectedRouter tag, and the route tag?
         <Provider store={store}>
             <ConnectedRouter history={history}>
                 <Route path="/" component={App}/>
             </ConnectedRouter>
         </Provider>,
-        document.getElementById('root'))
+          document.getElementById('root'))
 );
 
 // We first render the application
+
 render(App);
 
 // If webpacks HMR detects a change in the App, we reload it

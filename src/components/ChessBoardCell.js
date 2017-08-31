@@ -1,10 +1,10 @@
 import React from 'react';
-import './ChessBoard.css'
-import king from './assets/king.svg'
+import './ChessBoard.css';
 
-const ChessBoardCell = ({onCellClick}) => (
-    <div className="chessboard-cell" onClick={onCellClick}>
-        <img src={king} className="piece"/>
+
+const ChessBoardCell = ({onCellClick, placement, color, type, move,  selectPiece}) => (
+    <div className='chessboard-cell' id={selectPiece + move} onClick={() => onCellClick(placement, {color, type})}>
+        <div className={color + type}/>
     </div>
 );
 
