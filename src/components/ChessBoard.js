@@ -1,24 +1,36 @@
 import React from 'react';
 import './ChessBoard.styl'
+import * as _ from 'lodash'
 import {cellClicked} from "../actions/index";
 import {connect} from "react-redux";
 import {Container} from "reactstrap";
 import ChessBoardCell from "./ChessBoardCell";
 
 
-let ChessBoard = ({selected, pieces, onCellClick}) => (
+let ChessBoard = ({selected, pieces, movable, eatable, onCellClick}) => (
     <Container>
         <div className="chessboard">
             {
                 Object.entries(pieces).map(([placement, piece]) => {
-                    let selectPiece = ''
-                    if (selected.placement === placement){
+                    let selectPiece = '';
+                    let isMove = '';
+                    let isEatMove = '';
+                    if (placement === selected.placement){
                          selectPiece = 'selected'
                     }
-                    return piece === {} ?
-                        <ChessBoardCell key={placement} placement={placement} color='' type='' selectPiece={selectPiece} onCellClick={onCellClick}/>
+                    if(movable.includes(placement)) {
+                        isMove = 'move'
+                    }
+                    else {
+                        if(eatable.includes(placement)){
+                            isEatMove = 'eat'
+                        }
+                    }
+
+                    return _.isEmpty(piece) ?
+                        <ChessBoardCell key={placement} placement={placement} move={isMove + isEatMove} color='' type='' selectPiece={selectPiece} onCellClick={onCellClick}/>
                         :
-                        <ChessBoardCell key={placement} placement={placement} color={piece.color} type={piece.type} selectPiece={selectPiece}
+                        <ChessBoardCell key={placement} placement={placement} move={isEatMove} color={piece.color} type={piece.type} selectPiece={selectPiece}
                                         onCellClick={onCellClick}/>
                 }
             )}
@@ -29,17 +41,14 @@ let ChessBoard = ({selected, pieces, onCellClick}) => (
 const mapStateToProps = (state) => {
     return {
         selected: state.selected,
-        pieces: state.pieces
+        pieces: state.pieces,
+        movable: state.paths[0],
+        eatable: state.paths[1]
 
     }
 };
 
-// const mapDispatchToProps = (dispatch) => ({
-//     onCellClick: (placement) => {dispatch(cellClicked(placement))}
-// });
 
-//why does the onCellClick: cellClicked work? when there is no dispatch call?
-//also how does it know to get placement?
 ChessBoard = connect(
     mapStateToProps,
     {onCellClick: cellClicked}
@@ -47,4 +56,3 @@ ChessBoard = connect(
 
 export default ChessBoard;
 
-// <img src={pieces['A2'].imgSrc} alt={pieces['A2'].type}></img>

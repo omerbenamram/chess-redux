@@ -65,5 +65,6 @@ export const initState = {
         'F1': {type: 'Bishop', color: 'W'},
         'G1': {type: 'Knight', color: 'W'},
         'H1': {type: 'Rook', color: 'W'},
-    }
+    },
+    paths: [[],[]]
 };
