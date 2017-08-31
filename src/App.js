@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import logo from './logo.svg';
 import ChessBoard from './components/ChessBoard'
-
+import Turn from "./components/Turn";
 import './App.css';
 
 class App extends Component {
@@ -12,6 +12,7 @@ class App extends Component {
                     <img src={logo} className="App-logo" alt="logo"/>
                     <h2>Welcome to React</h2>
                 </div>
+                <Turn/>
                 <ChessBoard/>
             </div>
         );

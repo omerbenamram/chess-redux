@@ -18,7 +18,15 @@ div.chessboard
   background-color: red
 
 
-
+div.turn
+  display: flex
+  width: 100%;
+  height: 100%;
+  text-transform: uppercase;
+  text-align: center;
+  font-family: Helvetica;
+  font-size: 30px;
+  color: #000;
 
 for piece in 'WKing' 'BKing' 'WQueen' 'BQueen' 'WRook' 'BRook' 'WBishop' 'BBishop' 'WKnight' 'BKnight' 'WPawn' 'BPawn'
   .{piece}
