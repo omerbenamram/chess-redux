@@ -4,7 +4,7 @@ import {logger} from "redux-logger";
 import createHistory from 'history/createBrowserHistory'
 import {composeWithDevTools} from "redux-devtools-extension";
 import {routerMiddleware} from "react-router-redux";
-import {chessMiddleware} from "../chessMIddleware";
+import {chessMiddleware} from "../chessMiddleware";
 
 export const history = createHistory();
 

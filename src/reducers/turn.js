@@ -1,13 +1,13 @@
-import {PIECE_MOVED} from "../constants/actionTypes";
+import {SWITCH_TURN} from "../constants/actionTypes";
+import {BLACK, WHITE} from "../constants/index";
 
-export const turn = (state = 'W', action) => {
+export const turn = (state = WHITE, action) => {
   switch (action.type) {
-    case PIECE_MOVED:
-      if (state === 'W') {
-        return 'B'
-      } else {
-        return 'W'
-      }
+      case SWITCH_TURN:
+        if(action.isSelected){
+          return state === WHITE ? state : BLACK;
+          }
+          else return state;
     default:
       return state
   }

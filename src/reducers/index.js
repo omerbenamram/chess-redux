@@ -1,13 +1,9 @@
-import {rookPath, knightPath, queenPath, bishopPath, pawnPath, kingPath} from "../constants/index";
 import {combineReducers} from "redux";
-import {pieces} from "./pieces";
+import {board} from "./board";
 import {turn} from "./turn";
-import {paths} from "./paths"
 
 const rootReducer = combineReducers({
-  pieces,
-  paths,
-  selected,
+  board,
   turn,
 });
 
@@ -58,33 +54,6 @@ const rootReducer = combineReducers({
 //       return state;
 //   }
 // };
-
-const calculatePath = (pieces, piece, placement) => {
-  let paths = [[], []];
-  switch (piece.type) {
-    case 'Pawn':
-      paths = pawnPath(pieces, piece, placement);
-      break;
-    case 'Bishop':
-      paths = bishopPath(pieces, piece, placement);
-      break;
-    case 'Rook':
-      paths = rookPath(pieces, piece, placement);
-      break;
-    case 'Queen':
-      paths = queenPath(pieces, piece, placement);
-      break;
-    case 'Knight':
-      paths = knightPath(pieces, piece, placement);
-      break;
-    case 'King':
-      paths = kingPath(pieces, piece, placement);
-      break;
-    default:
-      break;
-  }
-  return paths;
-};
 
 
 export default rootReducer;

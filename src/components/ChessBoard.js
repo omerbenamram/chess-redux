@@ -15,7 +15,7 @@ let ChessBoard = ({selected, pieces, movable, eatable, onCellClick}) => (
                     let selectPiece = '';
                     let isMove = '';
                     let isEatMove = '';
-                    if (placement === selected.placement){
+                    if (placement === selected){
                          selectPiece = 'selected'
                     }
                     if(movable.includes(placement)) {
@@ -27,7 +27,7 @@ let ChessBoard = ({selected, pieces, movable, eatable, onCellClick}) => (
                         }
                     }
 
-                    return _.isEmpty(piece) ?
+                    return piece.type === null ?
                         <ChessBoardCell key={placement} placement={placement} move={isMove + isEatMove} color='' type='' selectPiece={selectPiece} onCellClick={onCellClick}/>
                         :
                         <ChessBoardCell key={placement} placement={placement} move={isEatMove} color={piece.color} type={piece.type} selectPiece={selectPiece}
@@ -40,10 +40,10 @@ let ChessBoard = ({selected, pieces, movable, eatable, onCellClick}) => (
 
 const mapStateToProps = (state) => {
     return {
-        selected: state.selected,
-        pieces: state.pieces,
-        movable: state.paths[0],
-        eatable: state.paths[1]
+        selected: _.findKey(state.board.pieces, (piece) => { return piece.selected}),
+        pieces: state.board.pieces,
+        movable: state.board.paths.move,
+        eatable: state.board.paths.eat
 
     }
 };
