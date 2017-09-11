@@ -1,6 +1,7 @@
 import * as actionTypes from "../constants/actionTypes";
 import * as _ from 'lodash';
 import {BLACK, WHITE} from "../constants/index";
+import {findKingPlacement} from "./threats";
 
 
 export const paths = (state = {move: [], eat:[]}, action) => {
@@ -30,6 +31,31 @@ export const paths = (state = {move: [], eat:[]}, action) => {
                     break;
             }
             return nextState;
+        case actionTypes.GET_CHECKED:
+        case actionTypes.CHECK:
+            let allPaths = _.map(state, (placement)=>{
+
+                switch (action.pieces[placement].type) {
+                    case 'Pawn':
+                        return {placement, paths:pawnPath(action.pieces, action.pieces[placement], placement)};
+                    case 'Bishop':
+                        return {placement, paths:bishopPath(action.pieces, action.pieces[placement], placement)};
+                    case 'Rook':
+                        return {placement, paths:rookPath(action.pieces, action.pieces[placement], placement)};
+                    case 'Queen':
+                        return {placement, paths:queenPath(action.pieces, action.pieces[placement], placement)};
+                    case 'Knight':
+                        return {placement, paths:knightPath(action.pieces, action.pieces[placement], placement)};
+                    case 'King':
+                        return {placement, paths:kingPath(action.pieces, action.pieces[placement], placement)};
+
+                    default:
+                        break;
+                }
+
+            });
+            return   piecesKingChecked(allPaths, findKingPlacement(action.pieces, action.color));
+
         case actionTypes.PIECE_TRY_EAT:
         case actionTypes.PIECE_MOVED:
             return {move: [], eat: []};
@@ -37,6 +63,19 @@ export const paths = (state = {move: [], eat:[]}, action) => {
             return state
     }
 };
+
+
+const piecesKingChecked = (allPaths, kingPlacement) =>{
+    return _.map(_.filter(allPaths, (value) =>{
+        if(value.paths.eat.includes(kingPlacement)){
+            return true
+        }
+    }), (value) => {
+        return value.placement;
+    });
+};
+
+
 const isPawnFirstMove = (placementSep, color) => {
     return ((color === BLACK && placementSep.number === '7') || (color === WHITE && placementSep.number === '2'));
 
@@ -53,7 +92,7 @@ const pawnEat = (placementSep, color) => {
     let eatPlacements = [-1, 1];
 
     return _.map(eatPlacements, (addValue) => {
-    return {...newPlacementSep, letter: parseLetter(placementSep, addValue)}});
+        return {...newPlacementSep, letter: parseLetter(placementSep, addValue)}});
 
 };
 const pawnMove = (placementSep, color, addValue=1) => {
@@ -61,20 +100,64 @@ const pawnMove = (placementSep, color, addValue=1) => {
         return {...placementSep, number: parseNumber(placementSep, -addValue)};
     }
     else {
-       return {...placementSep, number: parseNumber(placementSep, addValue)};
+        return {...placementSep, number: parseNumber(placementSep, addValue)};
     }
 
 };
+const rookBishopDirectionPathCal = (paths={move: [], eat: []} , pieces, placementSep,color, dir) => {
+    let directions = {
+        upRight: {letter: 1, number: 1}, downRight: {letter: 1, number: -1},
+        upLeft: {letter: -1, number: 1}, downLeft: {letter: -1, number: -1},
+        right:{letter:1, number:0}, left:{letter:-1, number:0}, up:{letter:0, number:1},
+        down:{letter:0, number:-1}};
+    let newPlacementSep = {...placementSep};
+    let newPaths = {...paths};
+
+    for (let i = 1; i < 8; i++) {
+
+        newPlacementSep = {letter: (parseLetter(placementSep, (i * directions[dir].letter))),
+            number: (parseNumber(placementSep, (i * directions[dir].number)))};
+        let isBlocked = isBlocking(pieces[rebuildPlacement(newPlacementSep)], color);
+        if (isBlocked.type) {
+            if (isBlocked.color) {
+                newPaths.eat.push(rebuildPlacement(newPlacementSep));
+            }
+            break;
+        }
+        newPaths.move.push(rebuildPlacement(newPlacementSep));
+    }
+    return newPaths;
+};
+const knightDirectionPathCal = (paths={move: [], eat: []} , pieces, placementSep,color, dir) => {
+    //the first direction in each is the big step (2 squares)
+    let directions = { upLeft:{letter:-1,number:2}, upRight:{letter:1,number:2}, downLeft:{letter:-1,number:-2}, downRight:{letter:1,number:-2},
+        leftUp:{letter:-2,number:1}, leftDown:{letter:-2,number:-1}, rightUp:{letter:2,number:1}, rightDown:{letter:2,number:-1}};
+    let newPaths = {...paths};
+
+    let newPlacementSep = {letter: (parseLetter(placementSep,  directions[dir].letter)),
+        number: (parseNumber(placementSep, directions[dir].number))};
+    let isBlocked = isBlocking(pieces[rebuildPlacement(newPlacementSep)], color);
+    if (isBlocked.type) {
+        if(isBlocked.color) {
+            newPaths.eat.push(rebuildPlacement(newPlacementSep));
+        }
+    }
+    else{
+        newPaths.move.push(rebuildPlacement(newPlacementSep));
+    }
+    return newPaths;
+};
+
 const parseLetter = (placementSep, numToAdd) => {
     return String.fromCharCode(placementSep.letter.charCodeAt(0) + numToAdd)
 };
 const parseNumber = (placementSep, numToAdd) => {
-    return (parseInt(placementSep.number) + numToAdd).toString();
+    return (parseInt(placementSep.number, 10) + numToAdd).toString();
 };
-const rebuildPlacement = (placementSep) => {
+export const rebuildPlacement = (placementSep) => {
     return  placementSep.letter + placementSep.number;
 };
-const separatePlacement = (placement) => {
+export const separatePlacement = (placement) => {
     let placementSep =_.values(placement);
     return  {letter:placementSep[0], number:placementSep[1]};
 
@@ -99,233 +182,71 @@ export const pawnPath = (pieces, piece, placement) => {
         }
     }
     let eatPlacements = pawnEat(placementSeparated, piece.color);
-     _.map(eatPlacements, (placementS) => {
+    _.map(eatPlacements, (placementS) => {
         let rebuiltPlacement = rebuildPlacement(placementS);
         let isBlocked = isBlocking(pieces[rebuiltPlacement], piece.color);
         if(isBlocked.type && isBlocked.color) {paths.eat.push(rebuiltPlacement)}});
 
-    console.log(paths);
     return paths;
 };
 export const bishopPath = (pieces, piece, placement) => {
-    let paths = [[],[]];
-    let placementChar = placement.slice(0,1);
-    let placementNumber = parseInt(placement.slice(1));
-    //up-right
-    for (let i=1; i < 8; i++){
-        let newPlacementNumber = placementNumber + i ;
-        let newPlacementLetter = String.fromCharCode(placementChar.charCodeAt(0) + i);
-        let newPlacement = newPlacementLetter + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }//down-right
-    for (let i=1; i < 8; i++){
-        let newPlacementNumber = placementNumber - i ;
-        let newPlacementLetter = String.fromCharCode(placementChar.charCodeAt(0) + i);
-        let newPlacement = newPlacementLetter + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }//down-left
-    for (let i=1; i < 8; i++){
-        let newPlacementNumber = placementNumber - i ;
-        let newPlacementLetter = String.fromCharCode(placementChar.charCodeAt(0) - i);
-        let newPlacement = newPlacementLetter + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }//up-left
-    for (let i=1; i < 8; i++){
-        let newPlacementNumber = placementNumber + i ;
-        let newPlacementLetter = String.fromCharCode(placementChar.charCodeAt(0) - i);
-        let newPlacement = newPlacementLetter + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }
-
+    let paths = {move: [], eat: []};
+    let placementSeparated = separatePlacement(placement);
+    let dir = ['upRight', 'downRight', 'upLeft', 'downLeft'];
+    _.forEach(dir, (value) => {
+        paths = {...rookBishopDirectionPathCal(paths,pieces,placementSeparated,piece.color,value)}});
     return paths;
 };
 export const rookPath = (pieces, piece, placement) => {
-    let paths = [[],[]];
-    let placementChar = placement.slice(0,1);
-    let placementNumber = parseInt(placement.slice(1));
-    //up
-    for (let i=1; i < 8; i++){
-        let newPlacementNumber = placementNumber + i ;
-        let newPlacement = placementChar + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }//right
-    for (let i=1; i < 8; i++){
-        let newPlacementLetter = String.fromCharCode(placementChar.charCodeAt(0) + i);
-        let newPlacement = newPlacementLetter + placementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }//down
-    for (let i=1; i < 8; i++){
-        let newPlacementNumber = placementNumber - i ;
-        let newPlacement = placementChar + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }//left
-    for (let i=1; i < 8; i++){
-        let newPlacementLetter = String.fromCharCode(placementChar.charCodeAt(0) - i);
-        let newPlacement = newPlacementLetter + placementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-            break;
-        }
-        paths[0].push(newPlacement);
-    }
-
-
+    let paths = {move: [], eat: []};
+    let placementSeparated = separatePlacement(placement);
+    let dir = ['right', 'up', 'left', 'down'];
+    _.forEach(dir, (value) => {
+        paths = {...rookBishopDirectionPathCal(paths,pieces,placementSeparated,piece.color,value)}});
     return paths;
 };
 export const knightPath = (pieces, piece, placement) =>{
-    let paths = [[],[]];
-    let placementChar = placement.slice(0,1);
-    let placementNumber = parseInt(placement.slice(1));
-    //2 up
-    let newPlacementNumber = placementNumber + 2;
-    let newPlacementLetter = [String.fromCharCode(placementChar.charCodeAt(0) - 1), String.fromCharCode(placementChar.charCodeAt(0) + 1)];
-    for (let i=0; i <2; i++){
-        let newPlacement = newPlacementLetter[i] + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-        }
-        else{
-            paths[0].push(newPlacement);
-        }
-    }
-    //2 down
-    newPlacementNumber = placementNumber - 2;
-    newPlacementLetter = [String.fromCharCode(placementChar.charCodeAt(0) - 1), String.fromCharCode(placementChar.charCodeAt(0) + 1)];
-    for (let i=0; i <2; i++){
-        let newPlacement = newPlacementLetter[i] + newPlacementNumber.toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-        }
-        else{
-            paths[0].push(newPlacement);
-        }
-    }
-    //2 left
-    newPlacementLetter =  String.fromCharCode(placementChar.charCodeAt(0) - 2);
-    newPlacementNumber = [(placementNumber-1), (placementNumber+1)];
-    for (let i=0; i <2; i++){
-        let newPlacement = newPlacementLetter + newPlacementNumber[i].toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-        }
-        else{
-            paths[0].push(newPlacement);
-        }
-    }
-    //2 right
-    newPlacementLetter =  String.fromCharCode(placementChar.charCodeAt(0) + 2);
-    newPlacementNumber = [(placementNumber-1), (placementNumber+1)];
-    for (let i=0; i <2; i++){
-        let newPlacement = newPlacementLetter + newPlacementNumber[i].toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
-        if (isBlocked.type) {
-            if(isBlocked.color) {
-                paths[1].push(newPlacement);
-            }
-        }
-        else{
-            paths[0].push(newPlacement);
-        }
-    }
-
+    let paths = {move: [], eat: []};
+    let placementSeparated = separatePlacement(placement);
+    let dir = ['upRight', 'downRight', 'upLeft', 'downLeft', 'leftUp', 'leftDown', 'rightUp', 'rightDown'];
+    _.forEach(dir, (value) => {
+        paths = {...knightDirectionPathCal(paths,pieces,placementSeparated,piece.color,value)}});
     return paths;
 
 };
 export const queenPath = (pieces, piece, placement) =>{
-    let paths = [[],[]];
+    let paths = {move: [], eat: []};
     let rPath = rookPath(pieces, piece, placement);
     let bPath = bishopPath(pieces, piece, placement);
-    paths[0] = _.concat(rPath[0], bPath[0]);
-    paths[1] = _.concat(rPath[1], bPath[1]);
+    paths.move = _.concat(rPath.move, bPath.move);
+    paths.eat = _.concat(rPath.eat, bPath.eat);
 
     return paths;
 };
 export const kingPath = (pieces, piece, placement) =>{
-    //might need to add a way to not let place which  result in getting checked
-    let paths = [[],[]];
-    let placementChar = placement.slice(0,1);
-    let placementNumber = parseInt(placement.slice(1));
+    let paths = {move: [], eat: []};
+    let placementSeparated = separatePlacement(placement);
     //each object holds the amount need to add to the letter and number.
     let pathAmountAdd = [{letter:-1, number:1},{letter:0, number:1},{letter:1, number:1},{letter:1, number:0},
         {letter:1, number:-1},{letter:0, number:-1},{letter:-1, number:-1}, {letter:-1, number:0}];
-    for(let i = 0; i < 8; i++){
-        let newPlacement = String.fromCharCode(placementChar.charCodeAt(0) + pathAmountAdd[i].letter)
-            + (placementNumber + pathAmountAdd[i].number).toString();
-        let isBlocked = isBlocking(pieces, newPlacement, piece.color);
+
+    _.forEach(pathAmountAdd, (value) => {
+        let newPlacementSep = {letter: (parseLetter(placementSeparated,  value.letter)),
+            number: (parseNumber(placementSeparated, value.number))};
+        let isBlocked = isBlocking(pieces[rebuildPlacement(newPlacementSep)], piece.color);
         if (isBlocked.type) {
             if(isBlocked.color) {
-                paths[1].push(newPlacement);
+                paths.eat.push(rebuildPlacement(newPlacementSep));
             }
         }
         else{
-            paths[0].push(newPlacement);
+            paths.move.push(rebuildPlacement(newPlacementSep));
         }
-    }
+    });
     return paths;
+
 };
 export const isBlocking = (newPlacementPiece, color) =>{
-
     if(newPlacementPiece !== undefined ){
         if(newPlacementPiece.type !== null){
             if(newPlacementPiece.color !== color){

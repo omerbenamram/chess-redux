@@ -9,14 +9,12 @@ export const selected = (state, action) => {
       else{
           //only way i know how to accsess the keys dynamically right now is withs keys and then the first place.
           let piece = {...state[keys(state)[0]], selected:false};
-          let nextState =  {[keys(state)[0]]: piece};
-          return nextState;
+          return {[keys(state)[0]]: piece};
       }
       case actionTypes.PIECE_TRY_EAT:
       case actionTypes.PIECE_MOVED:
           //modifies state to just a piece with no placement
-          let nextState =  {...state[keys(state)[0]], selected:false};
-          return nextState;
+          return {...state[keys(state)[0]], selected: false};
 
     default:
       return state
